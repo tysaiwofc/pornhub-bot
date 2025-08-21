@@ -57,8 +57,14 @@ Join our **official Discord** and be part of the community:
 
 ---
 
-# Image Embed Preview (4)
+# Image Embed Preview (1)
 
 <div align="center">
-  <img src="./images.png">
+  <img src="./assets/example_image.png" style="border-radius: 20px;">
+</div>
+
+# Image Embed Preview (2)
+
+<div align="center">
+  <img src="./assets/images.png">
 </div>

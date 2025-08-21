@@ -17,7 +17,7 @@ export default class Bot extends Client {
     }
 
     async registryCommands() {
-        await this.application.commands.set(this.commands.filter(cmd => cmd.active === true))
+        await this.application.commands.set(this.commands)
         this.log.log('Bot', 'Comandos registrados com sucesso!')
     }
 
