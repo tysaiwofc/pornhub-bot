@@ -21,7 +21,7 @@ export default class extends Command {
                 cmd.run(interaction)
             } catch (er) {
                 this.client.log.warn('INTERACTION', er)
-                interaction.client.sendInteraction(interaction, { content: "<:error:1105719628459692143>", ephemeral: true }).catch(() => {})
+                interaction.reply({ content: "Something went wrong while processing your interaction.", ephemeral: true }).catch(() => {})
                 
             }
         } else if(component) {
@@ -30,10 +30,12 @@ export default class extends Command {
                 component.run(interaction)
             } catch (er) {
                 this.client.log.warn('INTERACTION', er)
-                interaction.client.sendInteraction(interaction, { content: "<:error:1105719628459692143>", ephemeral: true }).catch(() => {})
+                interaction.reply({ content: "Something went wrong while processing your interaction.", ephemeral: true }).catch(() => {})
                 
             }
         
+        } else {
+            interaction.reply({ content: "Something went wrong while processing your interaction.", ephemeral: true }).catch(() => {})
         }
         
     }
