@@ -73,7 +73,7 @@ export default class extends Command {
              const thread = await i.message.startThread({
     name: `Video: ${videoClicked.title.slice(0, 30)}`, // thread name
     autoArchiveDuration: 60, // minutes before auto-archive
-    reason: `Thread created for video ${videoClicked.title}`,
+    reason: `Thread created for video ${videoClicked.title.slice(0, 30)}`,
     type: 11, // GUILD_PUBLIC_THREAD
 });
 
@@ -83,7 +83,7 @@ await thread.send({
         components: [
             new ButtonBuilder({
 
-                label: `Watch ${String(videoClicked.title).slice(0, 10)}`,
+                label: `Watch ${String(videoClicked.title).slice(0, 30)}`,
                 style: ButtonStyle.Link,
                 url: videoClicked.href
             })
