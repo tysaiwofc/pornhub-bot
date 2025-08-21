@@ -1,4 +1,4 @@
-# 🍑 Porn Hub BOT  
+# 🍑 XXX8N BOT  
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/tysaiwofc/pornhub-bot?style=for-the-badge)
 ![GitHub language count](https://img.shields.io/github/languages/count/tysaiwofc/pornhub-bot?style=for-the-badge)
