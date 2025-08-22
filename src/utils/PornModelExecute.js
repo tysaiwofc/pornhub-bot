@@ -56,7 +56,7 @@ export function stringParaNumeroVisualizacoes(params) {
     const string = params
     // Remova todos os caracteres que não são números ou ponto
     const numeroString = string.replace(/[^\d.]/g, '');
-
+    console.log(numeroString)
     // Converta a string para um número
     let numero = parseFloat(numeroString);
 
@@ -73,7 +73,7 @@ export function stringParaNumeroVisualizacoes(params) {
         numero *= 100000
     }
 
-    return numero;
+    return numero.toLocaleString('en-US');
 }
 
 export async function getModelById(id) {

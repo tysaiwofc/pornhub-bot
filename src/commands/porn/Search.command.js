@@ -2,6 +2,7 @@ import { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, EmbedBuilder, Butto
 import { fetchModel } from "../../utils/PornModelExecute.js";
 import Command from "../../structures/Command.js";
 import { getImage } from "../../utils/PornImagesExecute.js";
+import { saveVideos } from "../../utils/SQLiteDB.js";
 
 export default class extends Command {
     constructor(client) {
@@ -42,56 +43,27 @@ export default class extends Command {
             return interaction.editReply({ content: "I couldn't find any videos of this model" });
 
  
+       // Salva os vídeos e pega os IDs no DB
+const indexSaveVideo = await saveVideos(model.videos); // retorna um array de IDs
 
-        const message = await interaction.editReply({ embeds: [embed], components: [new ActionRowBuilder({
-            components: model.videos.slice(0, 4).map((video, index) => new ButtonBuilder({ style: ButtonStyle.Primary, label: video.title.slice(0, 10) + '...', custom_id: `video_${index}` }))
-        })], files: [attachment], fetchReply: true });
-
-        // Criar listener para os botões
-        const filter = i => i.user.id === interaction.user.id;
-        const collector = message.createMessageComponentCollector({ filter, time: 60000 });
-
-        collector.on('collect', async i => {
-            const index = parseInt(i.customId.split('_')[1]);
-            const videoClicked = model.videos[index];
-            
-            // Atualiza a mensagem removendo os botões
-            await i.update({ components: [new ActionRowBuilder({
-                components: [
+// Cria os botões usando os IDs do banco
+await interaction.editReply({
+    embeds: [embed],
+    components: [
+        new ActionRowBuilder({
+            components: indexSaveVideo.slice(0, 4).map((videoId, i) => 
                 new ButtonBuilder({
-                    custom_id: `videocreated_${index}`,
-                    label: `Thread Created By ${interaction.user.username}`,
-                    style: ButtonStyle.Secondary,
-                    disabled: true
+                    style: ButtonStyle.Primary,
+                    label: model.videos[i].title.slice(0, 10) + '...',
+                    custom_id: `video_${videoId}` // aqui usamos o ID correto
                 })
-                ]
-            })] });
-
-            // Cria um tópico com o nome do botão
-            if (i.channel.type === ChannelType.GuildText) {
-
-             const thread = await i.message.startThread({
-    name: `Video: ${videoClicked.title.slice(0, 30)}`, // thread name
-    autoArchiveDuration: 60, // minutes before auto-archive
-    reason: `Thread created for video ${videoClicked.title.slice(0, 30)}`,
-    type: 11, // GUILD_PUBLIC_THREAD
+            )
+        })
+    ],
+    files: [attachment],
+    fetchReply: true
 });
 
-await thread.send({
-    content: `<:morango:1162694146717397063> | ${interaction.user} Hello! This channel has been created to discuss the video **${videoClicked.title}** in a respectful manner. Please be courteous and considerate while participating. Feel free to share thoughts, comments, and ideas relevant to the video!`,
-    components: [new ActionRowBuilder({
-        components: [
-            new ButtonBuilder({
 
-                label: `Watch ${String(videoClicked.title).slice(0, 30)}`,
-                style: ButtonStyle.Link,
-                url: videoClicked.href
-            })
-        ]
-    })]
-});
-
-            }
-        });
     }
 }

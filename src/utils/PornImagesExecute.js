@@ -1,38 +1,28 @@
 import { createCanvas, loadImage } from 'canvas';
-const canvasWidth = 960; // (480x2)
-const canvasHeight = 540; // (270x2)
+const canvasWidth = 960;
+const canvasHeight = 540;
 
 export async function getImage(videos) {
+
     const canvas = createCanvas(canvasWidth, canvasHeight);
     const ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'black'; // Define a cor de preenchimento como preto
-    ctx.roundRect(0, 0, canvasWidth, canvasHeight, 20);
-    ctx.fill(); // Preenche o retângulo com cantos arredondados
 
-    // Array para armazenar as promessas de carregamento das imagens
-    const loadImagePromises = [];
+    // fundo preto
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    const imagePaths = videos
-    
-    // Carregar as imagens
-    imagePaths.forEach((path) => {
-        const promise = loadImage(path);
-        loadImagePromises.push(promise);
+    // carregar imagens válidas
+    const imagePaths = videos.filter(Boolean).slice(0, 4);
+    const images = await Promise.allSettled(imagePaths.map(p => loadImage(p)));
+
+    // desenhar imagens nos quadrantes
+    images.forEach((res, i) => {
+        if (res.status !== "fulfilled") return;
+        const img = res.value;
+        const x = (i % 2) * (canvasWidth / 2);
+        const y = Math.floor(i / 2) * (canvasHeight / 2);
+        ctx.drawImage(img, x, y, canvasWidth / 2, canvasHeight / 2);
     });
-    
-    // Esperar até que todas as imagens estejam carregadas e desenhar no canvas
-    await Promise.all(loadImagePromises).then((images) => {
-        // Desenhar as imagens no canvas
-        ctx.drawImage(images[0], 0, 0, canvasWidth / 2, canvasHeight / 2); // imagem1 no canto superior esquerdo
-        ctx.drawImage(images[1], canvasWidth / 2, 0, canvasWidth / 2, canvasHeight / 2); // imagem2 no canto superior direito
-        ctx.drawImage(images[2], 0, canvasHeight / 2, canvasWidth / 2, canvasHeight / 2); // imagem3 no canto inferior esquerdo
-        ctx.drawImage(images[3], canvasWidth / 2, canvasHeight / 2, canvasWidth / 2, canvasHeight / 2); // imagem4 no canto inferior direito
-    }).catch(() => {});
 
-    
-    // Salvar a imagem depois que todas as imagens estiverem desenhadas no canvas
-    const buffer = canvas.toBuffer()
-    return buffer;
+    return canvas.toBuffer();
 }
-
-
