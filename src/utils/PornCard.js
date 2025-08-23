@@ -4,7 +4,7 @@ import fs from "fs";
 const W = 800;
 const H = 450;
 
-// --- Cache em memória ---
+
 const cardCache = new Map();
 
 export async function generateCard({ 
@@ -23,7 +23,7 @@ export async function generateCard({
   const canvas = createCanvas(W, H);
   const ctx = canvas.getContext("2d");
 
-  // --- Fundo com gradiente suave ---
+
   const gradient = ctx.createLinearGradient(0, 0, W, H);
   gradient.addColorStop(0, "#181818");
   gradient.addColorStop(1, "#222222");
@@ -31,7 +31,7 @@ export async function generateCard({
   ctx.roundRect(0, 0, W, H, 30);
   ctx.fill();
 
-  // --- Carregar avatar ---
+ 
   const [avatarRes] = await Promise.allSettled([
     avatarPath ? loadImage(avatarPath) : null,
   ]);
@@ -51,17 +51,17 @@ export async function generateCard({
     ctx.restore();
   }
 
-  // --- Nome da modelo ---
+
   ctx.fillStyle = "#fff";
   ctx.font = "bold 28px Arial";
   ctx.fillText(modelName, 160, 70);
 
-  // --- Subs ---
+
   ctx.fillStyle = "#FF6600";
   ctx.font = "20px Arial";
   ctx.fillText(`${subs} views`, 160, 100);
 
-  // --- Idade e país ---
+
   ctx.fillStyle = "#ccc";
   ctx.font = "16px Arial";
   ctx.fillText(`🎂 ${age}  🌍 ${country}`, 160, 130);
@@ -89,7 +89,7 @@ function fillTextWithLimit(ctx, text, x, y, maxWidth) {
   ctx.fillText(truncated + "...", x, y);
 }
 
-  // --- Lista de vídeos ---
+
   ctx.font = "16px Arial";
   videos.slice(0, 6).forEach((video, i) => {
     const y = 170 + i * 45;
@@ -117,7 +117,7 @@ function fillTextWithLimit(ctx, text, x, y, maxWidth) {
   return buffer;
 }
 
-// --- Helper para cantos arredondados ---
+
 CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
   if (w < 2 * r) r = w / 2;
   if (h < 2 * r) r = h / 2;
@@ -131,26 +131,6 @@ CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
   return this;
 };
 
-// // --- Exemplo de uso ---
-// (async () => {
-//   const buffer = await generateCard({
-//     modelName: "Jane Doe",
-//     subs: "12.3k",
-//     age: 25,
-//     country: "USA",
-//     avatarPath: "./avatar.png",
-//     videos: [
-//       { name: "Video A" },
-//       { name: "Video B" },
-//       { name: "Video C" },
-//       { name: "Video D" },
-//       { name: "Video E" },
-//       { name: "Video F" },
-//     ],
-//   });
 
-//   fs.writeFileSync("card.png", buffer);
-//   console.log("✅ card.png gerado com informações adicionais!");
-// })();
 
 

@@ -1,6 +1,6 @@
-// Map em memória para armazenar vídeos
+
 const videoMap = new Map();
-let nextId = 1; // simula o ID auto-increment
+let nextId = 1; 
 
 function saveVideos(videos) {
     const ids = [];
@@ -11,7 +11,7 @@ function saveVideos(videos) {
         ids.push(id);
     });
 
-    return ids; // retorna um array com os IDs
+    return ids; 
 }
 
 function getVideo(id) {
