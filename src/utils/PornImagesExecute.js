@@ -1,28 +1,45 @@
-import { createCanvas, loadImage } from 'canvas';
-const canvasWidth = 960;
-const canvasHeight = 540;
+import { createCanvas, loadImage } from "canvas";
+
+const W = 960;
+const H = 540;
+const HALF_W = W / 2;
+const HALF_H = H / 2;
+
+const canvas = createCanvas(W, H);
+const ctx = canvas.getContext("2d");
+
+const imageCache = new Map();
+
+async function loadCachedImage(path) {
+  if (!path) return null;
+  if (imageCache.has(path)) return imageCache.get(path);
+
+  try {
+    const img = await loadImage(path);
+    imageCache.set(path, img);
+    return img;
+  } catch {
+    return null;
+  }
+}
 
 export async function getImage(videos) {
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, W, H);
 
-    const canvas = createCanvas(canvasWidth, canvasHeight);
-    const ctx = canvas.getContext('2d');
+  const imagePaths = videos.filter(Boolean).slice(0, 4);
 
-    // fundo preto
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  const images = await Promise.all(imagePaths.map(loadCachedImage));
 
-    // carregar imagens válidas
-    const imagePaths = videos.filter(Boolean).slice(0, 4);
-    const images = await Promise.allSettled(imagePaths.map(p => loadImage(p)));
+  for (let i = 0; i < images.length; i++) {
+    const img = images[i];
+    if (!img) continue;
 
-    // desenhar imagens nos quadrantes
-    images.forEach((res, i) => {
-        if (res.status !== "fulfilled") return;
-        const img = res.value;
-        const x = (i % 2) * (canvasWidth / 2);
-        const y = Math.floor(i / 2) * (canvasHeight / 2);
-        ctx.drawImage(img, x, y, canvasWidth / 2, canvasHeight / 2);
-    });
+    const x = (i & 1) * HALF_W;
+    const y = (i >> 1) * HALF_H;
 
-    return canvas.toBuffer();
+    ctx.drawImage(img, x, y, HALF_W, HALF_H);
+  }
+
+  return canvas.toBuffer();
 }

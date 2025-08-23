@@ -126,7 +126,7 @@ export async function getModelById(id) {
 
     return {
         ...pornstarInfo,
-        videos: videosAll.slice(0, 4)
+        videos: videosAll
     }
 
 }
