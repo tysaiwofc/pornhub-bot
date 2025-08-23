@@ -1,0 +1,28 @@
+# Use Node.js image based on Debian (easier for canvas)
+FROM node:20-bullseye
+
+# Install system dependencies required by canvas
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json, then install dependencies
+COPY package*.json ./
+RUN npm install --production
+
+# Copy the rest of the project files
+COPY . .
+
+# Set environment variables
+ENV NODE_ENV=production
+
+# Command to start the bot
+CMD ["npm", "start"]
